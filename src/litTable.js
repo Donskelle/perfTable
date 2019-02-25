@@ -1,4 +1,5 @@
 import { html, LitElement, css } from 'lit-element';
+import { repeat } from 'lit-html/directives/repeat';
 
 class LitTable extends LitElement {
   static get properties() {
@@ -85,17 +86,25 @@ class LitTable extends LitElement {
       </table>
 
       <table>
-        ${tableData.slice(0, currentRenderItems).map(data => {
-          return html`
-            <tr>
-              ${data.map(entry => {
-                return html`
-                  <td>${entry}</td>
-                `;
-              })}
-            </tr>
-          `;
-        })}
+        ${repeat(
+          tableData.slice(0, currentRenderItems),
+          (i, j) => j,
+          data => {
+            return html`
+              <tr>
+                ${repeat(
+                  data,
+                  (k, l) => l,
+                  entry => {
+                    return html`
+                      <td>${entry}</td>
+                    `;
+                  }
+                )}
+              </tr>
+            `;
+          }
+        )}
       </table>
     `;
   }
