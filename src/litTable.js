@@ -4,7 +4,27 @@ class LitTable extends LitElement {
   static get properties() {
     return {
       tableData: Array,
+      currentRender: Number,
     };
+  }
+
+  constructor() {
+    super();
+
+    this.currentRender = 20;
+  }
+
+  updated() {
+    requestIdleCallback(() => {
+      this.increaseRender();
+      this.requestUpdate();
+    });
+  }
+
+  increaseRender() {
+    if (this.tableData.length > this.currentRender) {
+      this.currentRender += 20;
+    }
   }
 
   static get styles() {
@@ -50,7 +70,7 @@ class LitTable extends LitElement {
   }
 
   render() {
-    const { tableData } = this;
+    const { tableData, currentRender } = this;
     return html`
       <table>
         <tr>
@@ -60,7 +80,7 @@ class LitTable extends LitElement {
             `;
           })}
         </tr>
-        ${tableData.map(data => {
+        ${tableData.slice(0, currentRender).map(data => {
           return html`
             <tr>
               ${data.map(entry => {
