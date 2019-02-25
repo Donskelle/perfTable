@@ -32,10 +32,9 @@
           document.body.appendChild(renderEle);
 
           // CANT REQUEST READY OF POLYMER COMPONENT
-          // Lit has renderedPromise
           // just resolve on next frame
           await new Promise((resolve, reject) => {
-            setTimeout(resolve,0)
+            setTimeout(resolve, 0);
           });
 
           performance.mark('updateComplete');

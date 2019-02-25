@@ -4,26 +4,27 @@ class LitTable extends LitElement {
   static get properties() {
     return {
       tableData: Array,
-      currentRender: Number,
+      currentRenderItems: Number,
     };
   }
 
   constructor() {
     super();
 
-    this.currentRender = 20;
+    this.currentRenderItems = 50;
   }
 
-  updated() {
-    requestIdleCallback(() => {
-      this.increaseRender();
-      this.requestUpdate();
-    });
+  firstUpdated() {
+    this.increaseRenderOnIdle();
   }
 
-  increaseRender() {
-    if (this.tableData.length > this.currentRender) {
-      this.currentRender += 20;
+  increaseRenderOnIdle() {
+    if (this.tableData.length > this.currentRenderItems) {
+      requestIdleCallback(() => {
+        this.currentRenderItems += 50;
+        this.requestUpdate();
+        this.increaseRenderOnIdle();
+      });
     }
   }
 
@@ -51,16 +52,17 @@ class LitTable extends LitElement {
 
   sortColumn({ target }) {
     const columnIndex = parseInt(target.dataset.id);
-    this.tableData = [
-      ...this.tableData.sort((a, b) => {
-        if (a[columnIndex] < b[columnIndex]) {
-          return 1;
-        } else if (a[columnIndex] > b[columnIndex]) {
-          return -1;
-        }
-        return 0;
-      }),
-    ];
+    this.tableData.sort((a, b) => {
+      if (a[columnIndex] < b[columnIndex]) {
+        return 1;
+      } else if (a[columnIndex] > b[columnIndex]) {
+        return -1;
+      }
+      return 0;
+    });
+
+    this.currentRenderItems = 50;
+    this.increaseRenderOnIdle();
   }
 
   createRenderRoot() {
@@ -70,7 +72,7 @@ class LitTable extends LitElement {
   }
 
   render() {
-    const { tableData, currentRender } = this;
+    const { tableData, currentRenderItems } = this;
     return html`
       <table>
         <tr>
@@ -80,7 +82,10 @@ class LitTable extends LitElement {
             `;
           })}
         </tr>
-        ${tableData.slice(0, currentRender).map(data => {
+      </table>
+
+      <table>
+        ${tableData.slice(0, currentRenderItems).map(data => {
           return html`
             <tr>
               ${data.map(entry => {

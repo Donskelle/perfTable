@@ -9,7 +9,7 @@ window.generateTableData = () => {
   for (let i = 0; i < rows; i++) {
     const entrys = [];
     for (let j = 0; j < columns; j++) {
-      entrys.push(i * j);
+      entrys.push((Math.random() * (i * j)).toFixed(1));
     }
     data.push(entrys);
   }
