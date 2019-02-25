@@ -1,5 +1,6 @@
 import { html, LitElement, css } from 'lit-element';
 import { repeat } from 'lit-html/directives/repeat';
+import {guard} from 'lit-html/directives/guard';
 
 class LitTable extends LitElement {
   static get properties() {
@@ -92,14 +93,13 @@ class LitTable extends LitElement {
           data => {
             return html`
               <tr>
-                ${repeat(
-                  data,
-                  (k, l) => l,
-                  entry => {
-                    return html`
-                      <td>${entry}</td>
-                    `;
-                  }
+                ${guard([data], () =>
+                  data.map(
+                    entry =>
+                      html`
+                        <td>${entry}</td>
+                      `
+                  )
                 )}
               </tr>
             `;
