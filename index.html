@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <script src="perf-tester.js"></script>
+    <style>
+      summary {
+        font-family: sans-serif;
+        font-size: 1.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <summary>Test comparing rendering with Shadow DOM v. not.</summary>
+    <perf-tester runs="20"></perf-tester>
+
+    <script>
+      document.querySelector('perf-tester').tests = [
+        'table.html?polymer&noShadow',
+        'table.html?polymer',
+        'table.html?noShadow',
+        'table.html'
+      ];
+    </script>
+  </body>
+</html>

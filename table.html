@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <script
+      src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"
+      defer
+    ></script>
+    <script type="module">
+      window.WebComponents = window.WebComponents || {
+        waitFor(cb) {
+          addEventListener('WebComponentsReady', cb);
+        },
+      };
+      WebComponents.waitFor(async () => {
+        const isLit = location.search.match('polymer') ? false : true;
+
+        if (isLit) {
+          await import('./src/litTable.js');
+        } else {
+          await import('./src/polymerTable.js');
+        }
+
+        await import('./generateTable.js');
+        const tableData = generateTableData();
+
+        // start test
+        requestAnimationFrame(async () => {
+          performance.mark('startCreateElement');
+          const renderEle = document.createElement('web-table');
+          renderEle.tableData = tableData;
+          document.body.appendChild(renderEle);
+
+          // CANT REQUEST READY OF POLYMER COMPONENT
+          // Lit has renderedPromise
+          // just resolve on next frame
+          await new Promise((resolve, reject) => {
+            setTimeout(resolve,0)
+          });
+
+          performance.mark('updateComplete');
+          performance.measure('TableCreation', 'startCreateElement', 'updateComplete');
+          const measures = performance.getEntriesByName('TableCreation');
+          const time = measures[0].duration.toFixed(4);
+
+          document.title = `${time}ms`;
+          window.top.postMessage({ time: time + 'ms' }, '*');
+        });
+      });
+    </script>
+
+    <style>
+      th {
+        color: blue;
+        height: 80px;
+        line-height: 80px;
+        font-size: 20px;
+      }
+      tr:nth-child(even) {
+        color: green;
+        font-size: 1.3em;
+      }
+      tr:nth-child(odd) {
+        color: yellow;
+      }
+    </style>
+  </head>
+  <body></body>
+</html>
